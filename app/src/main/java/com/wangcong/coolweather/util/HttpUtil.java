@@ -1,5 +1,7 @@
 package com.wangcong.coolweather.util;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,10 +27,21 @@ public class HttpUtil {
                     InputStream in = connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
+                    int b = reader.read();
+                    int count = 0;
+                    for (; b != -1; b = reader.read()) {
+                        response.append((char) b);
+                        if (b == '}')
+                            count++;
+                        if (count == 2)
+                            break;
                     }
+                    //String line;
+                    //while ((line = reader.readLine()) != null) {
+                    //    response.append(line);
+                    //}
+                    in.close();
+                    Log.d("read", "message: " + response.toString());
                     if (listener != null) {// 回调onFinish()方法
                         listener.onFinish(response.toString());
                     }
